@@ -2,7 +2,7 @@ package configMgmt
 
 import (
 	"fmt"
-	"github.com/Adron/cobra-cli-samples/helper"
+	"github.com/alknopfler/alkcli/helper"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
@@ -53,7 +53,10 @@ func validateKeyValuePair(key string, value string) bool {
 func writeKeyValuePair(key string, value interface{}) {
 	viper.Set(key, value)
 	err := viper.WriteConfig()
-	helper.HandleError(err)
+	if err!= nil{
+		helper.HandleError(err)
+	}
+	fmt.Println(viper.AllKeys())
 	fmt.Printf("Wrote the %s pair.\n", key)
 }
 

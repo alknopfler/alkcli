@@ -1,0 +1,33 @@
+connection:
+  cmd: "ssh"
+  host1:
+    target: 192.168.x.x
+    user: user1
+    key: xxxx
+  host2:
+    target: 192.168.y.y
+    x11: true
+    key: yyyy
+
+tunnel:
+  cmd: "sshuttle -r "
+  host1:
+    target: 192.168.1.1
+    network: 192.168.122.0/24
+  host2:
+    target: hostname.org
+    network: 192.168.122.0/24
+
+vpn:
+  cmd: "openvpn xxxx"
+  provider1: "xxx"
+    wait: true  #wait 5 sec until connection established
+    target: xxxx
+
+profile:
+  work:
+    vpn: provider1
+    tunnels: host2
+    ssh: host2
+
+

@@ -1,5 +1,4 @@
 /*
-Copyright © 2019 Adron Hall <adron@thrashingcode.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,24 +16,17 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/Adron/cobra-cli-samples/helper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
 )
 
-var configFile string
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cli",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "alkcli",
+	Short: "Alkcli is a simplifier tool just to automate basic daily tasks",
+	Long: `With alkcli you could add options to the configuration file in order
+expand the functionality to create new tasks automated `,
 }
 
 func Execute() {
@@ -49,16 +41,14 @@ func init() {
 }
 
 func initConfig() {
-	configFile = ".cobra-cli-samples.yml"
-	viper.SetConfigType("yaml")
-	viper.SetConfigFile(configFile)
 
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("COBRACLISAMPLES")
-	helper.HandleError(viper.BindEnv("API_KEY"))
-	helper.HandleError(viper.BindEnv("API_SECRET"))
-	helper.HandleError(viper.BindEnv("USERNAME"))
-	helper.HandleError(viper.BindEnv("PASSWORD"))
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("ALKCLI")
+	viper.AddConfigPath(".")
+	viper.SetConfigName(".alkcli-config.yml")
+
+	//helper.HandleError(viper.BindEnv("uno"))
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using configuration file: ", viper.ConfigFileUsed())
