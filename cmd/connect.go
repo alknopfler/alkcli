@@ -18,30 +18,34 @@ package cmd
 import (
 	"github.com/alknopfler/alkcli/connect"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var connectCmd = &cobra.Command{
 	Use:   "connect",
 	Short: "The 'connect' command will connect to the target",
 	Long: `The 'connect' command exec a command to establish the connection to the target host:
-    Usages:
-    You could connect to a host with the option declared in the config file just doing:
-	     # alkcli connect <target>
-    If you want, also, you could override some params
-         # alkcli connect <target> --user xxxx
+
+- You could connect to a host with the option declared in the config file just doing:
+     # alkcli connect <target>
+- If you want, also, you could override some params
+     # alkcli connect <target> --user xxxx
 `,
 
-     Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, args []string) {
 
 		x, _ := cmd.Flags().GetBool("x11")
-		privKey, _ := cmd.Flags().GetString("priv-key")
+		privKey, _ := cmd.Flags().GetString("ssh-priv-key")
 		user, _ := cmd.Flags().GetString("user")
-		command := viper.GetString("connection.cmd")
-		connect.ExecConnection(command, args, x, user, privKey)
+
+		connect.ExecConnection(args, x, user, privKey)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(connectCmd)
+
+	connectCmd.PersistentFlags().BoolP("x11", "x", false, "Export X11 [Default: false]")
+	connectCmd.PersistentFlags().StringP("ssh-priv-key", "k", "", "SSH Private Key to use with the connection")
+	connectCmd.PersistentFlags().StringP("user", "u", "", "Username used to establish the connection")
+
 }
