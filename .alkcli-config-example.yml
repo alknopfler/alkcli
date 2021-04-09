@@ -27,7 +27,7 @@ vpn:
 profile:
   work:
     vpn: provider1
-    tunnels: host2
-    ssh: host2
+    tunnel: host2
+    connection: host2
 
 

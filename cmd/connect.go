@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/alknopfler/alkcli/connect"
+	c "github.com/alknopfler/alkcli/connect"
 	"github.com/spf13/cobra"
 )
 
@@ -37,14 +37,15 @@ var connectCmd = &cobra.Command{
 		privKey, _ := cmd.Flags().GetString("ssh-priv-key")
 		user, _ := cmd.Flags().GetString("user")
 
-		connect.ExecConnection(args, x, user, privKey)
+		conn :=
+			conn.ExecConnection(args, x, user, privKey)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(connectCmd)
 
-	connectCmd.PersistentFlags().BoolP("x11", "x", false, "Export X11 [Default: false]")
+	connectCmd.PersistentFlags().BoolP("x11", "X", false, "Export X11 with the connection")
 	connectCmd.PersistentFlags().StringP("ssh-priv-key", "k", "", "SSH Private Key to use with the connection")
 	connectCmd.PersistentFlags().StringP("user", "u", "", "Username used to establish the connection")
 

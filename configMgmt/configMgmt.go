@@ -8,6 +8,19 @@ import (
 	"log"
 )
 
+const (
+	CONNECTION = "connection"
+	TUNNEL     = "tunnel"
+	VPN        = "vpn"
+	CMD        = "cmd"
+	TARGET     = "target"
+	USER       = "user"
+	KEY        = "key"
+	X          = "x11"
+	NETWORK    = "network"
+	WAIT       = "wait"
+)
+
 func ConfigKeyValuePairDelete(key string) {
 	DeleteKeyHack(key)
 }
@@ -53,7 +66,7 @@ func validateKeyValuePair(key string, value string) bool {
 func writeKeyValuePair(key string, value interface{}) {
 	viper.Set(key, value)
 	err := viper.WriteConfig()
-	if err!= nil{
+	if err != nil {
 		helper.HandleError(err)
 	}
 	fmt.Println(viper.AllKeys())
