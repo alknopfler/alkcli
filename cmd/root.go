@@ -26,7 +26,12 @@ var rootCmd = &cobra.Command{
 	Use:   "alkcli",
 	Short: "Alkcli is a simplifier tool just to automate basic daily tasks",
 	Long: `With alkcli you could add options to the configuration file in order
-expand the functionality to create new tasks automated `,
+expand the functionality to create new tasks automated .
+The config file must be in the same folder than the binary but it hidden.
+Example:
+ - .alkcli-config-example.yml in the github repo. 
+ - Just rename it to be .alkcli-config.yml with your params
+ - Located in the same folder than the binary alkcli`,
 }
 
 func Execute() {

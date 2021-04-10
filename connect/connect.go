@@ -1,12 +1,11 @@
 package connect
 
 import (
+	"fmt"
 	cm "github.com/alknopfler/alkcli/configMgmt"
-	"github.com/alknopfler/alkcli/helper"
 	"github.com/spf13/viper"
 	"os"
 	"os/exec"
-	"syscall"
 )
 
 type Connection struct {
@@ -19,12 +18,20 @@ type Connection struct {
 
 type ConnectionOptions func(c *Connection)
 
-func NewConnection(opts ...ConnectionOptions) *Connection {
+func NewConnection(target string, opts ...ConnectionOptions) *Connection {
 	conn := &Connection{
 		Command: viper.GetString(cm.CONNECTION + "." + cm.CMD),
+		Target:  viper.GetString(cm.CONNECTION + "." + target + "." + cm.TARGET),
+		User:    viper.GetString(cm.CONNECTION + "." + target + "." + cm.USER),
+		PrivKey: viper.GetString(cm.CONNECTION + "." + target + "." + cm.KEY),
+		X11:     viper.GetString(cm.CONNECTION + "." + target + "." + cm.X),
 	}
-	for _, opt := range opts {
-		opt(conn)
+	fmt.Println(conn)
+	if len(opts) > 0 {
+		for _, opt := range opts {
+			opt(conn)
+		}
+		return conn
 	}
 	return conn
 }
@@ -39,15 +46,23 @@ func WithParams(params map[string]string) ConnectionOptions {
 }
 
 func (c *Connection) ExecConnection() {
-
-	binCmd, lookErr := exec.LookPath(c.Command)
-	if lookErr != nil {
-		helper.HandleError(lookErr)
-		return
-	}
-	err := syscall.Exec(binCmd, []string{c.X11, c.Target, "-l " + c.User, "-i " + c.PrivKey}, os.Environ())
+	cmd := exec.Command(c.Command, translateX11(c.X11)+" "+"-i "+c.PrivKey+" "+c.User+"@"+c.Target)
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	/*err := syscall.Exec(binCmd, []string{translateX11(c.X11), c.Target, "-l" + c.User}, os.Environ())
 	if err != nil {
 		helper.HandleError(err)
 		return
+	}*/
+
+}
+
+func translateX11(s string) string {
+	if s == "true" {
+		return " -X"
+	} else {
+		return s
 	}
 }

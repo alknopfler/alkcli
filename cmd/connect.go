@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	cm "github.com/alknopfler/alkcli/configMgmt"
 	conn "github.com/alknopfler/alkcli/connect"
 	"github.com/alknopfler/alkcli/helper"
@@ -43,33 +44,33 @@ var connectCmd = &cobra.Command{
 		user, _ := cmd.Flags().GetString("user")
 
 		if !viper.IsSet(cm.CONNECTION + "." + cm.CMD) {
-			helper.HandleError(errors.New("Connection must have set a <cmd> key into <connection> yaml section"))
+			helper.HandleError(errors.New("Connection must have set a <cmd> key into <connection> yaml section. Use -h or --help"))
 			return
 		}
 		if args[0] == "" || !viper.IsSet(cm.CONNECTION+"."+args[0]+"."+cm.TARGET) {
-			helper.HandleError(errors.New("Connection must have set a <target> param to select from config file"))
+			helper.HandleError(errors.New("Connection must have set a <target> param to select from config file. Use -h or --help"))
 			return
-
 		}
+		fmt.Print("user:" + user)
 		if user != "" {
 			params["user"] = user
 		}
+		fmt.Print(x)
 		if x {
 			params["x11"] = "-X"
 		}
+		fmt.Print("priv:" + privKey)
 		if privKey != "" {
 			params["privKey"] = privKey
 		}
-		params["target"] = viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
-
+		target := viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
 		if len(params) > 0 {
-			c := conn.NewConnection(conn.WithParams(params))
+			c := conn.NewConnection(target, conn.WithParams(params))
 			c.ExecConnection()
-		} else {
-			c := conn.NewConnection()
-			c.ExecConnection()
+			return
 		}
-
+		c := conn.NewConnection(target)
+		c.ExecConnection()
 	},
 }
 
