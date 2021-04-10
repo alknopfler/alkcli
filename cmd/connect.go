@@ -16,8 +16,12 @@ limitations under the License.
 package cmd
 
 import (
-	c "github.com/alknopfler/alkcli/connect"
+	"errors"
+	cm "github.com/alknopfler/alkcli/configMgmt"
+	conn "github.com/alknopfler/alkcli/connect"
+	"github.com/alknopfler/alkcli/helper"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var connectCmd = &cobra.Command{
@@ -32,13 +36,40 @@ var connectCmd = &cobra.Command{
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
+		params := map[string]string{}
 
 		x, _ := cmd.Flags().GetBool("x11")
 		privKey, _ := cmd.Flags().GetString("ssh-priv-key")
 		user, _ := cmd.Flags().GetString("user")
 
-		conn :=
-			conn.ExecConnection(args, x, user, privKey)
+		if !viper.IsSet(cm.CONNECTION + "." + cm.CMD) {
+			helper.HandleError(errors.New("Connection must have set a <cmd> key into <connection> yaml section"))
+			return
+		}
+		if args[0] == "" || !viper.IsSet(cm.CONNECTION+"."+args[0]+"."+cm.TARGET) {
+			helper.HandleError(errors.New("Connection must have set a <target> param to select from config file"))
+			return
+
+		}
+		if user != "" {
+			params["user"] = user
+		}
+		if x {
+			params["x11"] = "-X"
+		}
+		if privKey != "" {
+			params["privKey"] = privKey
+		}
+		params["target"] = viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
+
+		if len(params) > 0 {
+			c := conn.NewConnection(conn.WithParams(params))
+			c.ExecConnection()
+		} else {
+			c := conn.NewConnection()
+			c.ExecConnection()
+		}
+
 	},
 }
 

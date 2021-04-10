@@ -1,16 +1,18 @@
 package connect
 
 import (
-	"errors"
 	cm "github.com/alknopfler/alkcli/configMgmt"
 	"github.com/alknopfler/alkcli/helper"
 	"github.com/spf13/viper"
+	"os"
+	"os/exec"
+	"syscall"
 )
 
 type Connection struct {
 	Command string
 	Target  string
-	X11     bool
+	X11     string
 	User    string
 	PrivKey string
 }
@@ -18,36 +20,34 @@ type Connection struct {
 type ConnectionOptions func(c *Connection)
 
 func NewConnection(opts ...ConnectionOptions) *Connection {
-	conn := &Connection{}
+	conn := &Connection{
+		Command: viper.GetString(cm.CONNECTION + "." + cm.CMD),
+	}
+	for _, opt := range opts {
+		opt(conn)
+	}
+	return conn
+}
 
+func WithParams(params map[string]string) ConnectionOptions {
+	return func(c *Connection) {
+		c.Target = params["target"]
+		c.X11 = params["x11"]
+		c.User = params["user"]
+		c.PrivKey = params["privKey"]
+	}
 }
 
 func (c *Connection) ExecConnection() {
 
-	// alkcli connect connection.cmd args[0] x11
-
-	if !viper.IsSet(cm.CONNECTION + "." + cm.CMD) {
-		helper.HandleError(errors.New("Connection must have set a <cmd> key into <connection> yaml section"))
-		return
-	}
-	if c.Target == "" || !viper.IsSet(cm.CONNECTION+"."+c.Target+"."+cm.TARGET) {
-		helper.HandleError(errors.New("Connection must have set a <target> key into <connection> yaml section or maybe the command is not complete"))
-		return
-	}
-	if c.User != "" {
-		u := c.User
-	} else {
-		u := viper.GetString(cm.CONNECTION + "." + cm.CMD)
-	}
-
-	command := viper.GetString(cm.CONNECTION + "." + cm.CMD)
-	target := viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
-	x := x11 || viper.GetBool(cm.CONNECTION+"."+args[0]+"."+cm.X)
-
-	/*binary, lookErr := exec.LookPath(command)
+	binCmd, lookErr := exec.LookPath(c.Command)
 	if lookErr != nil {
-		panic(lookErr)
+		helper.HandleError(lookErr)
+		return
 	}
-	syscall.Exec(binary, []string{command, args[0], valueX11, "-l " + user, "-i"}, os.Environ())
-	*/
+	err := syscall.Exec(binCmd, []string{c.X11, c.Target, "-l " + c.User, "-i " + c.PrivKey}, os.Environ())
+	if err != nil {
+		helper.HandleError(err)
+		return
+	}
 }
