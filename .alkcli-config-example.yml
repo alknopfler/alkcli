@@ -20,14 +20,17 @@ tunnel:
 
 vpn:
   cmd: "openvpn xxxx"
-  provider1: "xxx"
-    wait: true  #wait 5 sec until connection established
-    target: xxxx
+
+exec:
+  wake: "wake-on-lan 00:33:00:44:44:22"
+
 
 profile:
   work:
     vpn: provider1
+      wait: 5  #wait 5 sec until connection established
     tunnel: host2
     connection: host2
-
+  home:
+    connection: host3
 
