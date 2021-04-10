@@ -55,7 +55,7 @@ func initConfig() {
 
 	//helper.HandleError(viper.BindEnv("uno"))
 
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using configuration file: ", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println("Error Getting configuration file: ", viper.ConfigFileUsed())
 	}
 }

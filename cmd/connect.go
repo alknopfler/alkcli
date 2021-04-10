@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	cm "github.com/alknopfler/alkcli/configMgmt"
 	conn "github.com/alknopfler/alkcli/connect"
 	"github.com/alknopfler/alkcli/helper"
@@ -51,24 +50,27 @@ var connectCmd = &cobra.Command{
 			helper.HandleError(errors.New("Connection must have set a <target> param to select from config file. Use -h or --help"))
 			return
 		}
-		fmt.Print("user:" + user)
+
 		if user != "" {
 			params["user"] = user
 		}
-		fmt.Print(x)
+
 		if x {
 			params["x11"] = "-X"
 		}
-		fmt.Print("priv:" + privKey)
+
 		if privKey != "" {
 			params["privKey"] = privKey
 		}
+
 		target := viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
+
 		if len(params) > 0 {
 			c := conn.NewConnection(target, conn.WithParams(params))
 			c.ExecConnection()
 			return
 		}
+
 		c := conn.NewConnection(target)
 		c.ExecConnection()
 	},
