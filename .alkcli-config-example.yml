@@ -19,7 +19,8 @@ tunnel:
     network: 192.168.122.0/24
 
 vpn:
-  cmd: "openvpn xxxx"
+  provider1:
+    cmd: "openvpn xxxx"
 
 exec:
   wake: "wake-on-lan 00:33:00:44:44:22"
@@ -28,7 +29,6 @@ exec:
 profile:
   work:
     vpn: provider1
-      wait: 5  #wait 5 sec until connection established
     tunnel: host2
     connection: host2
   home:
