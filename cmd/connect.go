@@ -31,48 +31,51 @@ var connectCmd = &cobra.Command{
 
 - You could connect to a host with the option declared in the config file just doing:
      # alkcli connect <target>
-- If you want, also, you could override some params
+- If you want, also, you could override some flags
      # alkcli connect <target> --user xxxx
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		params := map[string]string{}
+		if len(args) > 0 {
 
-		x, _ := cmd.Flags().GetBool("x11")
-		privKey, _ := cmd.Flags().GetString("ssh-priv-key")
-		user, _ := cmd.Flags().GetString("user")
+			params := map[string]string{}
 
-		if !viper.IsSet(cm.CONNECTION + "." + cm.CMD) {
-			helper.HandleError(errors.New("Connection must have set a <cmd> key into <connection> yaml section. Use -h or --help"))
-			return
-		}
-		if args[0] == "" || !viper.IsSet(cm.CONNECTION+"."+args[0]+"."+cm.TARGET) {
-			helper.HandleError(errors.New("Connection must have set a <target> param to select from config file. Use -h or --help"))
-			return
-		}
+			x, _ := cmd.Flags().GetBool("x11")
+			privKey, _ := cmd.Flags().GetString("ssh-priv-key")
+			user, _ := cmd.Flags().GetString("user")
 
-		if user != "" {
-			params["user"] = user
-		}
+			if !viper.IsSet(cm.CONNECTION + "." + cm.CMD) {
+				helper.HandleError(errors.New("Connection must have set a <cmd> key into <connection> yaml section. Use -h or --help"))
+				return
+			}
+			if args[0] == "" || !viper.IsSet(cm.CONNECTION+"."+args[0]+"."+cm.TARGET) {
+				helper.HandleError(errors.New("Connection must have set a <target> param to select from config file. Use -h or --help"))
+				return
+			}
 
-		if x {
-			params["x11"] = "-X"
-		}
+			if user != "" {
+				params["user"] = user
+			}
 
-		if privKey != "" {
-			params["privKey"] = privKey
-		}
+			if x {
+				params["x11"] = "-X"
+			}
 
-		target := viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
+			if privKey != "" {
+				params["privKey"] = privKey
+			}
 
-		if len(params) > 0 {
-			c := conn.NewConnection(target, conn.WithParams(params))
+			target := viper.GetString(cm.CONNECTION + "." + args[0] + "." + cm.TARGET)
+
+			if len(params) > 0 {
+				c := conn.NewConnection(target, conn.WithParams(params))
+				c.ExecConnection()
+				return
+			}
+
+			c := conn.NewConnection(target)
 			c.ExecConnection()
-			return
 		}
-
-		c := conn.NewConnection(target)
-		c.ExecConnection()
 	},
 }
 
