@@ -24,12 +24,14 @@ vpn:
 
 exec:
   wake: "wake-on-lan 00:33:00:44:44:22"
+  sleep: "sleep 5"
 
 
 profile:
   work:
     vpn: provider1
     tunnel: host2
+    exec: sleep
     connection: host2
   home:
     connection: host3

@@ -18,7 +18,7 @@ const (
 	KEY        = "key"
 	X          = "x11"
 	NETWORK    = "network"
-	WAIT       = "wait"
+	EXEC       = "exec"
 )
 
 func ConfigKeyValuePairDelete(key string) {
