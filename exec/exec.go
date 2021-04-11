@@ -18,8 +18,8 @@ func NewExec(cmd string) *Exec {
 	return e
 }
 
-func (e *Exec) ExecVpn() {
-	cmd := exec.Command(e.Command)
+func (e *Exec) ExecLine() {
+	cmd := exec.Command("bash", "-c", e.Command)
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr

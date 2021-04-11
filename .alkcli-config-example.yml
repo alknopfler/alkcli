@@ -25,7 +25,7 @@ vpn:
 exec:
   wake: "wake-on-lan 00:33:00:44:44:22"
   sleep: "sleep 5"
-
+  mycmd: "mycmd opt1 opt2 opt3"
 
 profile:
   work:

@@ -41,7 +41,7 @@ var execCmd = &cobra.Command{
 			}
 
 			e := ex.NewExec(args[0])
-			e.ExecVpn()
+			e.ExecLine()
 		}
 	},
 }
