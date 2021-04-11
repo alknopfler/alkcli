@@ -28,11 +28,13 @@ exec:
   mycmd: "mycmd opt1 opt2 opt3"
 
 profile:
-  work:
+  work: #always the connection must be the lastone because stdin will be redirected
+    list: [vpn, tunnel, exec, connection]
     vpn: provider1
     tunnel: host2
     exec: sleep
     connection: host2
   home:
+    list: [connection]
     connection: host3
 

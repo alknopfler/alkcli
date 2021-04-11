@@ -3,42 +3,51 @@ package profile
 import (
 	"fmt"
 	cm "github.com/alknopfler/alkcli/configMgmt"
-	"github.com/alknopfler/alkcli/connect"
+	conn "github.com/alknopfler/alkcli/connect"
 	"github.com/alknopfler/alkcli/exec"
 	"github.com/alknopfler/alkcli/tunnel"
 	"github.com/alknopfler/alkcli/vpn"
 	"github.com/spf13/viper"
-	"os"
 	"time"
 )
 
 type Profile struct {
-	ParentCMD map[string]map[string]string
+	listCmd     []string
+	invocations map[string]string
 }
 
 func NewProfile(name string) *Profile {
-	p := &Profile{
-		ParentCMD: viper.GetStringMap(cm.PROFILE + "." + name),
+	listInput := viper.GetStringSlice(cm.PROFILE + "." + name + "." + cm.LIST)
+	inv := make(map[string]string)
+
+	for _, val := range listInput {
+		inv[val] = viper.GetString(cm.PROFILE + "." + name + "." + val)
 	}
-	fmt.Println(p.ParentCMD)
+	p := &Profile{
+		listCmd:     listInput,
+		invocations: inv,
+	}
 	return p
 }
 
 func (p *Profile) ExecProfile() {
+	for _, val := range p.listCmd {
 
-	for i, val := range p.ParentCMD {
-		switch p.ParentCMD[i] {
-		case val["connection"]:
-			connect.NewConnection(execution).ExecConnection()
-			time.Sleep(2)
-		case "tunnel":
-			tunnel.NewTunnel(execution)
-		case "vpn":
-			vpn.NewVpn(execution)
-			time.Sleep(10) //just to wait until finish connection
-		case "exec":
-			exec.NewExec(execution)
-			time.Sleep(3) //just to wait until finish execution
+		switch val {
+		case cm.CONNECTION:
+			fmt.Println("[alkcli] Task: Connection launched")
+			conn.NewConnection(p.invocations[cm.CONNECTION]).ExecConnection()
+		case cm.VPN:
+			fmt.Println("[alkcli] Task: VPN launched")
+			vpn.NewVpn(p.invocations[cm.VPN]).ExecVpn()
+			time.Sleep(10 * time.Second)
+		case cm.TUNNEL:
+			fmt.Println("[alkcli] Task: Tunnel launched")
+			tunnel.NewTunnel((p.invocations[cm.TUNNEL])).ExecTunnel()
+		case cm.EXEC:
+			fmt.Println("[alkcli] Task: Exec launched")
+			exec.NewExec(p.invocations[cm.EXEC]).ExecLine()
 		}
+		time.Sleep(3 * time.Second) //time between commands
 	}
 }

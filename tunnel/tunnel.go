@@ -37,6 +37,8 @@ func WithParams(params map[string]string) TunnelOptions {
 }
 
 func (t *Tunnel) ExecTunnel() {
+	exec.Command("sh", "-c", "sudo -S pkill -SIGINT"+t.Command).Output()
+
 	cmd := exec.Command(t.Command, "-D", "-r", t.Target, t.Network)
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin

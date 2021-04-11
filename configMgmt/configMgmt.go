@@ -20,6 +20,7 @@ const (
 	NETWORK    = "network"
 	EXEC       = "exec"
 	PROFILE    = "profile"
+	LIST       = "list"
 )
 
 func ConfigKeyValuePairDelete(key string) {
