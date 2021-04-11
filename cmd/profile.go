@@ -30,7 +30,7 @@ var profileCmd = &cobra.Command{
 	Long: `The 'profile' command will create a list of things to setup an environment specified in the file:
 
 - You could launch a profile to the destination network jumping through target host:
-     # alkcli vpn <provider1>
+     # alkcli profile <name>
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
