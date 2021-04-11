@@ -19,6 +19,7 @@ const (
 	X          = "x11"
 	NETWORK    = "network"
 	EXEC       = "exec"
+	PROFILE    = "profile"
 )
 
 func ConfigKeyValuePairDelete(key string) {

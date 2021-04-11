@@ -19,33 +19,33 @@ import (
 	"errors"
 	cm "github.com/alknopfler/alkcli/configMgmt"
 	"github.com/alknopfler/alkcli/helper"
-	v "github.com/alknopfler/alkcli/vpn"
+	prof "github.com/alknopfler/alkcli/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var vpnCmd = &cobra.Command{
-	Use:   "vpn",
-	Short: "The 'vpn' command will create a vpn using the command specified in config file",
-	Long: `The 'vpn' command will create a vpn to establish the connection to the target host parsing the config file:
+var profileCmd = &cobra.Command{
+	Use:   "profile",
+	Short: "The 'profile' command will exec a list of things specified in config file",
+	Long: `The 'profile' command will create a list of things to setup an environment specified in the file:
 
-- You could create a tunnel to the destination network jumping through target host:
+- You could launch a profile to the destination network jumping through target host:
      # alkcli vpn <provider1>
 `,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
-			if args[0] == "" || !viper.IsSet(cm.VPN+"."+args[0]+"."+cm.CMD) {
-				helper.HandleError(errors.New("VPN must have set a <command> param to select from config file. Use -h or --help"))
+			if args[0] == "" || !viper.IsSet(cm.PROFILE+"."+args[0]) {
+				helper.HandleError(errors.New("profile must have set a <profile-name> param to select from config file. Use -h or --help"))
 				return
 			}
 
-			w := v.NewVpn(args[0])
-			w.ExecVpn()
+			p := prof.NewProfile(args[0])
+			p.ExecProfile()
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(vpnCmd)
+	rootCmd.AddCommand(profileCmd)
 }
